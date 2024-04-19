@@ -9,9 +9,14 @@ provider:
   region: us-east-1
   profile: rafae
   iamRoleStatements:
-    - Effect: 'Allow'
-      Action: 'dynamodb:*'
+    - Effect: Allow
+      Action: 
+        - dynamodb:*
       Resource: !GetAtt moheedeventHandler.Arn
+    - Effect: Allow
+      Action: 
+        - cognito-idp:AdminAddUserToGroup
+      Resource: '*'
 
 functions:
   addNewPatient:
@@ -21,11 +26,39 @@ functions:
           path: /newpatient
           method: POST
           cors: true
+  EditPatient:
+    handler: functions/manage_patient/editExitingPatient.handler
+    events:
+      - http:
+          path: /editpatient/{id}
+          method: PUT
+          cors: true
+  deletePatient:
+    handler: functions/manage_patient/deletePatient.handler
+    events:
+      - http:
+          path: /deletepatient/{id}
+          method: DELETE
+          cors: true
+  listAllPatient:
+    handler: functions/manage_patient/listAllPatients.handler
+    events:
+      - http:
+          path: /allpatients
+          method: GET
+          cors: true
   addNewBloodCells:
     handler: functions/manage_blood_cells/addNewBloodCells.handler
     events:
       - http:
           path: /newbloodcell
+          method: POST
+          cors: true
+  addNewBloodGroups:
+    handler: functions/manage_blood_groups/addNewBloodGroup.handler
+    events:
+      - http:
+          path: /newbloodgroup
           method: POST
           cors: true
 
@@ -42,3 +75,79 @@ resources:
         KeySchema:
           - AttributeName: id
             KeyType: HASH
+    moheeddonor:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: moheeddonor
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+    CognitoUserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        AliasAttributes:
+          - email
+        UsernameConfiguration:
+          CaseSensitive: false
+        AutoVerifiedAttributes:
+          - email
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 8
+            RequireLowercase: true
+            RequireNumbers: true
+            RequireUppercase: true
+            RequireSymbols: true
+        Schema:
+          - AttributeDataType: String
+            Mutable: true
+            Name: given_name
+            Required: true
+            StringAttributeConstraints:
+              MinLength: "1"
+          - AttributeDataType: String
+            Mutable: true
+            Name: family_name
+            Required: true
+            StringAttributeConstraints:
+              MinLength: "1"
+          - AttributeDataType: String
+            Mutable: true
+            Name: email
+            Required: true
+            StringAttributeConstraints:
+              MinLength: "1"
+    WebCognitoUserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: web
+        UserPoolId: !Ref CognitoUserPool
+        ExplicitAuthFlows:
+          - ALLOW_USER_SRP_AUTH
+          - ALLOW_REFRESH_TOKEN_AUTH
+        PreventUserExistenceErrors: ENABLED
+    ServerCognitoUserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: server
+        UserPoolId: !Ref CognitoUserPool
+        ExplicitAuthFlows:
+          - ALLOW_ADMIN_USER_PASSWORD_AUTH
+          - ALLOW_REFRESH_TOKEN_AUTH
+        PreventUserExistenceErrors: ENABLED
+    patient:
+      Type: AWS::Cognito::UserPoolGroup
+      Properties:
+        Description: "Use patient group"
+        GroupName: patient
+        UserPoolId: !Ref CognitoUserPool
+    donor:
+      Type: AWS::Cognito::UserPoolGroup
+      Properties:
+        Description: "Use donor group"
+        GroupName: donor
+        UserPoolId: !Ref CognitoUserPool
