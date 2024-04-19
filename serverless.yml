@@ -1,0 +1,44 @@
+service: blood-bank
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: dev
+  region: us-east-1
+  profile: rafae
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action: 'dynamodb:*'
+      Resource: !GetAtt moheedeventHandler.Arn
+
+functions:
+  addNewPatient:
+    handler: functions/manage_patient/addNewPatient.handler
+    events:
+      - http:
+          path: /newpatient
+          method: POST
+          cors: true
+  addNewBloodCells:
+    handler: functions/manage_blood_cells/addNewBloodCells.handler
+    events:
+      - http:
+          path: /newbloodcell
+          method: POST
+          cors: true
+
+resources:
+  Resources:
+    moheedeventHandler:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: moheedeventHandler
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
