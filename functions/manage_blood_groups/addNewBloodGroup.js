@@ -14,7 +14,7 @@ const handler= async (event) => {
   };
   
   await dynamodb.put({
-    TableName: "moheedeventHandler",
+    TableName: "moheeddonor",
     Item: newBloodGroups
   }).promise();
 
