@@ -16,6 +16,7 @@ provider:
         - arn:aws:dynamodb:us-east-1:300205417350:table/moheedeventHandler
         - arn:aws:dynamodb:us-east-1:300205417350:table/moheeddonor
         - arn:aws:dynamodb:us-east-1:300205417350:table/moheedbloodcells
+        - arn:aws:dynamodb:us-east-1:300205417350:table/moheedpatientreport
     - Effect: Allow
       Action: 
         - cognito-idp:AdminAddUserToGroup
@@ -43,6 +44,10 @@ functions:
           path: /deletepatient/{id}
           method: DELETE
           cors: true
+          authorizer:
+            name: CognitoAuthorizer
+            type: COGNITO_USER_POOLS
+            arn: arn:aws:cognito-idp:us-east-1:300205417350:userpool/us-east-1_haE3aDuSN
   listAllPatient:
     handler: functions/manage_patient/listAllPatients.handler
     events:
@@ -54,7 +59,7 @@ functions:
     handler: functions/manage_patient/postConformation.handler
     events:
       - cognitoUserPool:
-          pool: us-east-1_haE3aDuSN
+          pool: us-east-1_t7hWbpEzM
           trigger: PostConfirmation
   addNewBloodCells:
     handler: functions/manage_blood_cells/addNewBloodCells.handler
@@ -112,6 +117,90 @@ functions:
           path: /listbloodgroup
           method: GET
           cors: true
+  addPatientReport:
+    handler: functions/patient_reports/createpatientReport.handler
+    events:
+      - http:
+          path: /addpatientreport/{id}
+          method: POST
+          cors: true
+  updatePatientReport:
+    handler: functions/patient_reports/editPatientReport.handler
+    events:
+      - http:
+          path: /editpatientreport/{id}
+          method: PUT
+          cors: true
+  deletePatientReport:
+    handler: functions/patient_reports/deletePatientReport.handler
+    events:
+      - http:
+          path: /deletepatientreport/{id}
+          method: DELETE
+          cors: true
+  listPatientReports:
+    handler: functions/patient_reports/listAllPatientReports.handler
+    events:
+      - http:
+          path: /allpatientreports
+          method: GET
+          cors: true
+  addBloodCellReport:
+    handler: functions/blood_cell_reports/createBloodCellReport.handler
+    events:
+      - http:
+          path: /addbloodcellreport
+          method: POST
+          cors: true
+  updateBloodCellReport:
+    handler: functions/blood_cell_reports/editBloodCellReport.handler
+    events:
+      - http:
+          path: /editbloodcellreport/{id}
+          method: PUT
+          cors: true
+  deleteBloodCellReport:
+    handler: functions/blood_cell_reports/deleteBloodCellReport.handler
+    events:
+      - http:
+          path: /deletebloodcellreport/{id}
+          method: DELETE
+          cors: true
+  listBloodCellReports:
+    handler: functions/blood_cell_reports/listAllBloodCellReports.handler
+    events:
+      - http:
+          path: /allbloodcellreports
+          method: GET
+          cors: true
+  addBloodGroupReport:
+    handler: functions/blood_group_reports/createBloodGroupReport.handler
+    events:
+      - http:
+          path: /addbloodgroupreport
+          method: POST
+          cors: true
+  updateBloodGroupReport:
+    handler: functions/blood_group_reports/editBloodGroupReport.handler
+    events:
+      - http:
+          path: /editbloodgroupreport/{id}
+          method: PUT
+          cors: true
+  deleteBloodGroupReport:
+    handler: functions/blood_group_reports/deleteBloodGroupReport.handler
+    events:
+      - http:
+          path: /deletebloodgroupreport/{id}
+          method: DELETE
+          cors: true
+  listBloodGroupReport:
+    handler: functions/blood_group_reports/listAllBloodGroupReports.handler
+    events:
+      - http:
+          path: /allbloodgroupreport
+          method: GET
+          cors: true
 
 resources:
   Resources:
@@ -141,6 +230,17 @@ resources:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: moheeddonor
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+    moheedPatientRports:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: moheedPatientRports
         BillingMode: PAY_PER_REQUEST
         AttributeDefinitions:
           - AttributeName: id
