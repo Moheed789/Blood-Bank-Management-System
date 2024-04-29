@@ -3,18 +3,24 @@ const {v4: uuidv4} = require("uuid");
 
 const handler = async(event) => {
     const dynamodb = new AWS.DynamoDB.DocumentClient();
-    const {name, age} = JSON.parse(event.body);
-    const bloodCellId = uuidv4();
+    const {reportDate, redBloodCells, whiteBloodCells, platelets} = JSON.parse(event.body);
+    const id = uuidv4();
+    const bloodCellId = event.pathparameter?.id;
 
     const createBloodCellReport = {
-        id: bloodCellId,
-        name,
-        age
+        id,
+        reportDate,
+        redBloodCells,
+        whiteBloodCells,
+        platelets
     };
 
     await dynamodb.put({
-        TableName: "",
-        Item: createBloodCellReport
+        TableName: "moheedPatientRports",
+        Item: createBloodCellReport,
+        Key: {
+            id: bloodCellId
+        }
     }).promise();
 
     return({

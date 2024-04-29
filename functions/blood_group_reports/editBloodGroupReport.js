@@ -2,22 +2,26 @@ const AWS = require("aws-sdk");
 
 const handler = async(event) => {
     const dynamodb = new AWS.DynamoDB.DocumentClient();
-    const {name, age} = JSON.parse(event.body);
+    const {bloodGroupType, reportDate, description, createdBy} = JSON.parse(event.body);
     const bloodGroupId = event.pathParameters?.id;
 
     const updateBloodGroupReport = {
-        TableName: "",
+        TableName: "moheedPatientRports",
         Key:{
             id: bloodGroupId
         },
-        UpdateExpression: 'set #name = :name, #age = :age',
+        UpdateExpression: 'set #bloodGroupType = :bloodGroupType, #reportDate = :reportDate, #description = :description, #createdBy = :createdBy',
         ExpressionAttributeNames: {
-            '#name': 'name',
-            '#age': 'age',
+            '#bloodGroupType': 'bloodGroupType',
+            '#reportDate': 'reportDate',
+            '#description': 'description',
+            '#createdBy': 'createdBy',
         },
         ExpressionAttributeValues: {
-            ':name': name,
-            ':age': age,
+            ':bloodGroupType': bloodGroupType,
+            ':reportDate': reportDate,
+            ':description': description,
+            ':createdBy': createdBy,
         },
         ReturnValues: "ALL_NEW"
     };

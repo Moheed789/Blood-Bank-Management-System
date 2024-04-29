@@ -16,7 +16,7 @@ provider:
         - arn:aws:dynamodb:us-east-1:300205417350:table/moheedeventHandler
         - arn:aws:dynamodb:us-east-1:300205417350:table/moheeddonor
         - arn:aws:dynamodb:us-east-1:300205417350:table/moheedbloodcells
-        - arn:aws:dynamodb:us-east-1:300205417350:table/moheedpatientreport
+        - arn:aws:dynamodb:us-east-1:300205417350:table/moheedPatientRports
     - Effect: Allow
       Action: 
         - cognito-idp:AdminAddUserToGroup
@@ -47,7 +47,7 @@ functions:
           authorizer:
             name: CognitoAuthorizer
             type: COGNITO_USER_POOLS
-            arn: arn:aws:cognito-idp:us-east-1:300205417350:userpool/us-east-1_haE3aDuSN
+            arn: !GetAtt CognitoUserPool.Arn
   listAllPatient:
     handler: functions/manage_patient/listAllPatients.handler
     events:
@@ -149,7 +149,7 @@ functions:
     handler: functions/blood_cell_reports/createBloodCellReport.handler
     events:
       - http:
-          path: /addbloodcellreport
+          path: /addbloodcellreport/{id}
           method: POST
           cors: true
   updateBloodCellReport:
@@ -177,7 +177,7 @@ functions:
     handler: functions/blood_group_reports/createBloodGroupReport.handler
     events:
       - http:
-          path: /addbloodgroupreport
+          path: /addbloodgroupreport/{id}
           method: POST
           cors: true
   updateBloodGroupReport:

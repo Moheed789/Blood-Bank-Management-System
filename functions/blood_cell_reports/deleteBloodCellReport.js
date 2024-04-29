@@ -5,7 +5,7 @@ const handler = async(event) => {
     const bloodCellId = event.pathParameters?.id;
 
     const deleteBloodCellReport = {
-        TableName: "",
+        TableName: "moheedPatientRports",
         Key:{
             id: bloodCellId
         }
