@@ -15,6 +15,7 @@ provider:
     BLOOD_CELL_DYNAMO_DB_TABLE: arn:aws:dynamodb:us-east-1:300205417350:table/moheedbloodcells
     BLOOD_GROUP_DYNAMO_DB_TABLE: arn:aws:dynamodb:us-east-1:300205417350:table/moheeddonor
     REPORTS_DYNAMO_DB_TABLE: arn:aws:dynamodb:us-east-1:300205417350:table/moheedPatientRports
+    PATIENT_GROUP: patient
 
 ## IAM ROLE DYNAMODB & COGNITO USER POOL PERMISSIONS
   iamRoleStatements:

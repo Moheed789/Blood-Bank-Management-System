@@ -18,7 +18,7 @@ const handler = async (event) => {
   try {
     const cognitoIdentityServiceProvider = new AWS.CognitoIdentityServiceProvider();
     const params = {
-      GroupName: 'patient',
+      GroupName: process.env.PATIENT_GROUP,
       Username: event.userName,
       UserPoolId: event.userPoolId
     };
