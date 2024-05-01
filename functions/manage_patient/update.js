@@ -2,24 +2,24 @@ const AWS = require("aws-sdk");
 
 const handler = async (event) => {
   const dynamodb = new AWS.DynamoDB.DocumentClient()
-  const {name, age, bloodgroup} = JSON.parse(event.body);
-  const bloodGroupId = event.pathParameters?.id;
+  const {name, age, gender} = JSON.parse(event.body);
+  const patientId = event.pathParameters?.id;
 
   await dynamodb.update({
-    TableName: "moheeddonor",
+    TableName: process.env.PATIENT_DYNAMO_DB_TABLE,
     Key: {
-        id: bloodGroupId
+        id: patientId
     },
-    UpdateExpression: 'set #name = :name, #age = :age, #bloodgroup = :bloodgroup',
+    UpdateExpression: 'set #name = :name, #age = :age, #gender = :gender',
     ExpressionAttributeNames: {
       '#name': 'name',
       '#age': 'age',
-      '#bloodgroup': 'bloodgroup',
+      '#gender': 'gender',
   },
     ExpressionAttributeValues: {
         ':name': name,
         ':age': age,
-        ':bloodgroup': bloodgroup,
+        ':gender': gender,
     },
     ReturnValues: "ALL_NEW"
   }).promise();
@@ -27,7 +27,7 @@ const handler = async (event) => {
   return {
     statusCode: 200,
     body: JSON.stringify({
-        message: "Blood Group Edit Successfully"
+        message: "Patient Edit Successfully"
     }),
   };
 };

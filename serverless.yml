@@ -8,6 +8,15 @@ provider:
   stage: dev
   region: us-east-1
   profile: rafae
+
+## ENVIRONMENT VARIABLES
+  environment:
+    PATIENT_DYNAMO_DB_TABLE: "arn:aws:dynamodb:us-east-1:300205417350:table/moheedeventHandler"
+    BLOOD_CELL_DYNAMO_DB_TABLE: arn:aws:dynamodb:us-east-1:300205417350:table/moheedbloodcells
+    BLOOD_GROUP_DYNAMO_DB_TABLE: arn:aws:dynamodb:us-east-1:300205417350:table/moheeddonor
+    REPORTS_DYNAMO_DB_TABLE: arn:aws:dynamodb:us-east-1:300205417350:table/moheedPatientRports
+
+## IAM ROLE DYNAMODB & COGNITO USER POOL PERMISSIONS
   iamRoleStatements:
     - Effect: Allow
       Action: 
@@ -23,22 +32,24 @@ provider:
       Resource: '*'
 
 functions:
+
+## PATIENT FLOW
   addNewPatient:
-    handler: functions/manage_patient/addNewPatient.handler
+    handler: functions/manage_patient/create.handler
     events:
       - http:
           path: /newpatient
           method: POST
           cors: true
   EditPatient:
-    handler: functions/manage_patient/editExitingPatient.handler
+    handler: functions/manage_patient/update.handler
     events:
       - http:
           path: /editpatient/{id}
           method: PUT
           cors: true
   deletePatient:
-    handler: functions/manage_patient/deletePatient.handler
+    handler: functions/manage_patient/delete.handler
     events:
       - http:
           path: /deletepatient/{id}
@@ -49,153 +60,165 @@ functions:
             type: COGNITO_USER_POOLS
             arn: !GetAtt CognitoUserPool.Arn
   listAllPatient:
-    handler: functions/manage_patient/listAllPatients.handler
+    handler: functions/manage_patient/list.handler
     events:
       - http:
           path: /allpatients
           method: GET
           cors: true
+
+## POST CONFIRMATION LAMBDA TRIGGER FLOW
   postFunc:
-    handler: functions/manage_patient/postConformation.handler
+    handler: src/trigger/postConformation.handler
     events:
       - cognitoUserPool:
           pool: us-east-1_t7hWbpEzM
           trigger: PostConfirmation
+
+## BLOOD CELLS FLOW
   addNewBloodCells:
-    handler: functions/manage_blood_cells/addNewBloodCells.handler
+    handler: functions/manage_blood_cells/create.handler
     events:
       - http:
           path: /newbloodcell
           method: POST
           cors: true
   deleteBloodCell:
-    handler: functions/manage_blood_cells/deleteBloodCell.handler
+    handler: functions/manage_blood_cells/delete.handler
     events:
       - http:
           path: /deletebloodcell/{id}
           method: DELETE
           cors: true
   editBloodCell:
-    handler: functions/manage_blood_cells/editExitingBloodCell.handler
+    handler: functions/manage_blood_cells/update.handler
     events:
       - http:
           path: /updatebloodcell/{id}
           method: PUT
           cors: true
   listAllBloodCells:
-    handler: functions/manage_blood_cells/listAllBloodCells.handler
+    handler: functions/manage_blood_cells/list.handler
     events:
       - http:
           path: /allbloodcells
           method: GET
           cors: true
+
+## BLOOD GROUPS FLOW
   addNewBloodGroups:
-    handler: functions/manage_blood_groups/addNewBloodGroup.handler
+    handler: functions/manage_blood_groups/create.handler
     events:
       - http:
           path: /newbloodgroup
           method: POST
           cors: true
   deleteBloodGroup:
-    handler: functions/manage_blood_groups/deleteBloodGroup.handler
+    handler: functions/manage_blood_groups/delete.handler
     events:
       - http:
           path: /deletebloodgroup/{id}
           method: DELETE
           cors: true
   editBloodGroup: 
-    handler: functions/manage_blood_groups/editExitingBloodGroup.handler
+    handler: functions/manage_blood_groups/update.handler
     events:
       - http:
           path: /editbloodgroup/{id}
           method: PUT
           cors: true
   listAllBloodGroups:
-    handler: functions/manage_blood_groups/listAllBloodGroups.handler
+    handler: functions/manage_blood_groups/list.handler
     events:
       - http:
           path: /listbloodgroup
           method: GET
           cors: true
+
+## PATIENT REPORTS FLOW
   addPatientReport:
-    handler: functions/patient_reports/createpatientReport.handler
+    handler: functions/patient_reports/create.handler
     events:
       - http:
           path: /addpatientreport/{id}
           method: POST
           cors: true
   updatePatientReport:
-    handler: functions/patient_reports/editPatientReport.handler
+    handler: functions/patient_reports/update.handler
     events:
       - http:
           path: /editpatientreport/{id}
           method: PUT
           cors: true
   deletePatientReport:
-    handler: functions/patient_reports/deletePatientReport.handler
+    handler: functions/patient_reports/delete.handler
     events:
       - http:
           path: /deletepatientreport/{id}
           method: DELETE
           cors: true
   listPatientReports:
-    handler: functions/patient_reports/listAllPatientReports.handler
+    handler: functions/patient_reports/list.handler
     events:
       - http:
           path: /allpatientreports
           method: GET
           cors: true
+        
+## BLOOD CELL REPORTS FLOW
   addBloodCellReport:
-    handler: functions/blood_cell_reports/createBloodCellReport.handler
+    handler: functions/blood_cell_reports/create.handler
     events:
       - http:
           path: /addbloodcellreport/{id}
           method: POST
           cors: true
   updateBloodCellReport:
-    handler: functions/blood_cell_reports/editBloodCellReport.handler
+    handler: functions/blood_cell_reports/update.handler
     events:
       - http:
           path: /editbloodcellreport/{id}
           method: PUT
           cors: true
   deleteBloodCellReport:
-    handler: functions/blood_cell_reports/deleteBloodCellReport.handler
+    handler: functions/blood_cell_reports/delete.handler
     events:
       - http:
           path: /deletebloodcellreport/{id}
           method: DELETE
           cors: true
   listBloodCellReports:
-    handler: functions/blood_cell_reports/listAllBloodCellReports.handler
+    handler: functions/blood_cell_reports/list.handler
     events:
       - http:
           path: /allbloodcellreports
           method: GET
           cors: true
+
+## BLOOD GROUP REPORTS FLOW
   addBloodGroupReport:
-    handler: functions/blood_group_reports/createBloodGroupReport.handler
+    handler: functions/blood_group_reports/create.handler
     events:
       - http:
           path: /addbloodgroupreport/{id}
           method: POST
           cors: true
   updateBloodGroupReport:
-    handler: functions/blood_group_reports/editBloodGroupReport.handler
+    handler: functions/blood_group_reports/update.handler
     events:
       - http:
           path: /editbloodgroupreport/{id}
           method: PUT
           cors: true
   deleteBloodGroupReport:
-    handler: functions/blood_group_reports/deleteBloodGroupReport.handler
+    handler: functions/blood_group_reports/delete.handler
     events:
       - http:
           path: /deletebloodgroupreport/{id}
           method: DELETE
           cors: true
   listBloodGroupReport:
-    handler: functions/blood_group_reports/listAllBloodGroupReports.handler
+    handler: functions/blood_group_reports/list.handler
     events:
       - http:
           path: /allbloodgroupreport
@@ -204,6 +227,7 @@ functions:
 
 resources:
   Resources:
+## DYNAMODB TABLES FLOW
     moheedeventHandler:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -248,6 +272,8 @@ resources:
         KeySchema:
           - AttributeName: id
             KeyType: HASH
+          
+## COGNITO USER POOLS FLOW
     CognitoUserPool:
       Type: AWS::Cognito::UserPool
       Properties:
@@ -301,6 +327,8 @@ resources:
           - ALLOW_ADMIN_USER_PASSWORD_AUTH
           - ALLOW_REFRESH_TOKEN_AUTH
         PreventUserExistenceErrors: ENABLED
+
+## COGNITO USER POOL GROUPS FLOW
     patient:
       Type: AWS::Cognito::UserPoolGroup
       Properties:

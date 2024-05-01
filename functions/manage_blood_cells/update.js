@@ -6,7 +6,7 @@ const handler = async (event) => {
   const bloodCellId = event.pathParameters?.id;
 
   await dynamodb.update({
-    TableName: "moheedbloodcells",
+    TableName: process.env.BLOOD_CELL_DYNAMO_DB_TABLE,
     Key: {
         id: bloodCellId
     },

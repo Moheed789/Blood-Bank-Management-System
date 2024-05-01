@@ -2,28 +2,25 @@ const AWS = require("aws-sdk");
 const {v4: uuidv4} = require("uuid");
 
 const handler= async (event) => {
-  console.log("event", JSON.stringify(event));
   const dynamodb = new AWS.DynamoDB.DocumentClient()
-  const {name, age, gender, phoneNumber, address} = JSON.parse(event.body);
+  const {name, age, bloodcell} = JSON.parse(event.body);
   const id = uuidv4();
 
-  const newPatient = {
+  const newBloodCells = {
     id,
     name,
     age,
-    gender,
-    phoneNumber,
-    address
+    bloodcell
   };
   
   await dynamodb.put({
-    TableName: "moheedeventHandler",
-    Item: newPatient
+    TableName: process.env.BLOOD_CELL_DYNAMO_DB_TABLE,
+    Item: newBloodCells
   }).promise();
 
     return {
         statusCode: 200,
-        body: JSON.stringify(newPatient),
+        body: JSON.stringify(newBloodCells),
   }
 };
 

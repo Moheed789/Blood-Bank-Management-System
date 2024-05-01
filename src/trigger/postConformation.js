@@ -12,7 +12,7 @@ const handler = async (event) => {
     email: event.request.userAttributes.email
   };
   await dynamodb.put({
-    TableName: "moheedeventHandler",
+    TableName: process.env.PATIENT_DYNAMO_DB_TABLE,
     Item: userCreate
   }).promise();
   try {

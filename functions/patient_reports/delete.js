@@ -5,7 +5,7 @@ const handler = async(event) => {
     const patientId = event.pathParameters?.id;
 
     const deletePatientReport = {
-        TableName: "moheedpatientreport",
+        TableName: process.env.REPORTS_DYNAMO_DB_TABLE,
         Key: {
             id: patientId
         }

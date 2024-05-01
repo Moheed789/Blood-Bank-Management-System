@@ -3,11 +3,11 @@ const AWS = require("aws-sdk");
 const handler = async(event) => {
     const dynamodb = new AWS.DynamoDB.DocumentClient();
     try {
-        const params = await dynamodb.scan({TableName: "moheedPatientRports"}).promise();
+        const getAllBloodGroupReports = await dynamodb.scan({TableName: process.env.REPORTS_DYNAMO_DB_TABLE}).promise();
 
         return({
             statusCode: 200,
-            body: JSON.stringify({params})
+            body: JSON.stringify({getAllBloodGroupReports})
         });
     } catch (error) {
         console.log("error", JSON.stringify(error.message));

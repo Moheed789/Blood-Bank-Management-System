@@ -14,7 +14,7 @@ const handler = async (event) => {
             };
         }
         const params = {
-            TableName: "moheedeventHandler",
+            TableName: process.env.PATIENT_DYNAMO_DB_TABLE,
             Key: {
                 id: event.pathParameters?.id
             }

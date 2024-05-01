@@ -6,7 +6,7 @@ const handler = async(event) => {
     const bloodGroupId = event.pathParameters?.id;
 
     const updateBloodGroupReport = {
-        TableName: "moheedPatientRports",
+        TableName: process.env.REPORTS_DYNAMO_DB_TABLE,
         Key:{
             id: bloodGroupId
         },

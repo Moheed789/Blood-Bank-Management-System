@@ -16,7 +16,7 @@ const handler = async(event) => {
     };
 
     await dynamodb.put({
-        TableName: "moheedPatientRports",
+        TableName: process.env.REPORTS_DYNAMO_DB_TABLE,
         Item: createBloodCellReport,
         Key: {
             id: bloodCellId

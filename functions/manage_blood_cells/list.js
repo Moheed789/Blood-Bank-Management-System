@@ -3,7 +3,7 @@ const AWS = require("aws-sdk");
 const handler = async (event) => {
     const dynamodb = new AWS.DynamoDB.DocumentClient();
     try {
-        const res = await dynamodb.scan({TableName: "moheedeventHandler"}).promise();
+        const res = await dynamodb.scan({TableName: process.env.BLOOD_CELL_DYNAMO_DB_TABLE}).promise();
     
         return {
             statusCode: 200,

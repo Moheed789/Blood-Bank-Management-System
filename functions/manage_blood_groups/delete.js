@@ -6,7 +6,7 @@ const handler = async (event) => {
         const deleteToItem = event.pathParameters?.id;
 
         const params = {
-            TableName: 'moheedbloodcells',
+            TableName: process.env.BLOOD_GROUP_DYNAMO_DB_TABLE,
             Key: {
                 id: deleteToItem
             }
